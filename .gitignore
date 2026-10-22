@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 app/weather_parser.py.bak
 .adk/
+temp/
