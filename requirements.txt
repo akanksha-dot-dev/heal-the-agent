@@ -1,0 +1,4 @@
+# PIN EXACT VERSIONS. ADK ships roughly every 2 weeks and 2.x broke the 1.x API.
+# Re-test and re-pin the week before your workshop.
+google-adk==2.12.0
+python-dotenv>=1.0
