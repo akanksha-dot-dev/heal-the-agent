@@ -1,10 +1,10 @@
-"""THE MODEL ADAPTER: one function, `ask(prompt, model) -> str`.
+﻿"""THE MODEL ADAPTER: one function, `ask(prompt, model) -> str`.
 
 Everything model-specific lives here, so the rest of the harness never cares
 whether the brain is a cloud model, a local model, or a recording.
 
   "gemini-flash-lite-latest"   -> Gemini API (cloud, needs GOOGLE_API_KEY)
-  "ollama/gemma4:e2b"          -> Ollama on YOUR laptop (plain HTTP to localhost:11434)
+  "ollama/gemma4:e4b"          -> Ollama on YOUR laptop (plain HTTP to localhost:11434)
   "replay"                     -> pre-recorded answers (offline stage prop; see cassettes/)
 
 The doctor model only has to turn TEXT into TEXT. No tool-calling needed, which is

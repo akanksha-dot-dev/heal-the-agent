@@ -1,4 +1,4 @@
-# 🩺 Heal the Agent — a 60-minute workshop starter
+﻿# 🩺 Heal the Agent — a 60-minute workshop starter
 
 An AI agent whose *tool* breaks when a vendor API changes, and a **harness** that
 **detects → diagnoses → patches → verifies** the fix on its own.
@@ -56,7 +56,7 @@ python run_agent.py --api v2 "What's the weather in Lisbon?"
 | `check_setup.py` | pre-flight check for participants · `selftest.py` for the presenter |
 
 ## Model cascade (local + cloud in one run)
-`DOCTOR_CASCADE=ollama/gemma4:e2b,gemini-flash-lite-latest` tries the local model first; a failed
+`DOCTOR_CASCADE=ollama/gemma4:e4b,gemini-flash-lite-latest` tries the local model first; a failed
 verification (or an unreachable Ollama) hands the job to the cloud model. No Ollama? It is skipped automatically.
 
 ## ⚠️ Safety

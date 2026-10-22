@@ -1,4 +1,4 @@
-"""PRE-FLIGHT CHECK. Run this the day before:   python check_setup.py
+﻿"""PRE-FLIGHT CHECK. Run this the day before:   python check_setup.py
 Prints ✅ / ⚠️ / ❌ for each thing the workshop needs. Only the first four are REQUIRED."""
 import importlib.metadata as md
 import json
@@ -59,7 +59,7 @@ try:
         names = [m["name"] for m in json.load(r)["models"]]
     show(True, f"Ollama is running; models: {', '.join(names) or '(none pulled yet)'}")
     show(any("gemma4" in n for n in names), "a local model is pulled (optional)",
-         "ollama pull gemma4:e2b   (several GB! do it on home wifi)", required=False)
+         "ollama pull gemma4:e4b   (several GB! do it on home wifi)", required=False)
 except Exception:
     show(False, "Ollama is running (OPTIONAL: the workshop works without it)", "install from https://ollama.com", required=False)
 

@@ -1,4 +1,4 @@
-"""THE HARNESS  (Agent = Model + Harness).
+﻿"""THE HARNESS  (Agent = Model + Harness).
 
 The model never touches your files and never runs anything. It only writes text.
 Everything that makes this an *agent that heals itself* is the code in this file:
@@ -25,7 +25,7 @@ from harness.prompts import DOCTOR_PROMPT, history_block
 PARSER_FILE = Path(__file__).resolve().parent.parent / "app" / "weather_parser.py"
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 # Models to try, in order. A failed attempt escalates to the next one.
-# e.g. DOCTOR_CASCADE="ollama/gemma4:e2b,gemini-flash-lite-latest"
+# e.g. DOCTOR_CASCADE="ollama/gemma4:e4b,gemini-flash-lite-latest"
 CASCADE = [m.strip() for m in os.getenv("DOCTOR_CASCADE", "gemini-flash-lite-latest").split(",") if m.strip()]
 AUTO_APPLY = os.getenv("AUTO_APPLY", "1") == "1"
 ANTI_CHEAT = os.getenv("ANTI_CHEAT", "0") == "1"  # BONUS: see verify_fresh_sample()
