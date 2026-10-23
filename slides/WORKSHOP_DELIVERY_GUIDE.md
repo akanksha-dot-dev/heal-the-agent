@@ -242,7 +242,15 @@ No speaker notes. This is ambient. You're greeting people, helping with setup is
 
 ## 0:00 – 0:03 | 🎬 THE HOOK (No slides. Terminal only.)
 
+**Option A: Terminal hook** (classic, dramatic)
+
 Your screen: a terminal, font size cranked up. Title slide was visible while people settled. Now switch to terminal.
+
+**Option B: Dashboard hook** (visual, audience-friendly — RECOMMENDED for large rooms)
+
+Open `python dashboard.py` beforehand. The audience sees the beautiful dark UI. Select v2, click **Break It** → red crash appears. Then click **Heal It** → pipeline lights up step by step → green HEALED banner. Way more visual than a terminal.
+
+**Either way, here's the script:**
 
 💬 **Say:**
 > "Let me show you something before we start."
@@ -571,6 +579,7 @@ BEFORE THE WORKSHOP
 □ python selftest.py           → ALL GREEN?
 □ python check_setup.py        → ALL GREEN?
 □ python reset.py              → parser reset?
+□ python dashboard.py          → opens in browser?
 □ Font size cranked up (28pt+)
 □ Desktop notifications OFF
 □ .env has a working API key
