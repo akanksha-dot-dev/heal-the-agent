@@ -6,15 +6,20 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 LOAD = ("import importlib.util as u; s=u.spec_from_file_location('h','solutions/healer.py'); "
         "m=u.module_from_spec(s); s.loader.exec_module(m); ")
 
 
 def scenario(name, env, code, must_contain, must_not_contain=()):
     subprocess.run([sys.executable, "reset.py"], cwd=ROOT, capture_output=True)
-    e = {**os.environ, "DOCTOR_CASCADE": "replay", **env}
+    e = {**os.environ, "DOCTOR_CASCADE": "replay", "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1", **env}
     e.pop("GOOGLE_API_KEY", None)
-    out = subprocess.run([sys.executable, "-c", LOAD + code], cwd=ROOT, env=e, capture_output=True, text=True)
+    out = subprocess.run([sys.executable, "-c", LOAD + code], cwd=ROOT, env=e, capture_output=True, text=True, encoding="utf-8", errors="replace")
     text = (out.stdout + out.stderr)
     ok = all(s in text for s in must_contain) and not any(s in text for s in must_not_contain)
     print(("✅" if ok else "❌"), name)
