@@ -1,4 +1,4 @@
-﻿"""PRE-FLIGHT CHECK. Run this the day before:   python check_setup.py
+"""PRE-FLIGHT CHECK. Run this the day before:   python check_setup.py
 Prints ✅ / ⚠️ / ❌ for each thing the workshop needs. Only the first four are REQUIRED."""
 import importlib.metadata as md
 import json
@@ -6,6 +6,11 @@ import os
 import sys
 import urllib.request
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 try:
     from dotenv import load_dotenv
