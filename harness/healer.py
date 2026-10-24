@@ -1,4 +1,4 @@
-﻿"""THE HARNESS  (Agent = Model + Harness).
+"""THE HARNESS  (Agent = Model + Harness).
 
 The model never touches your files and never runs anything. It only writes text.
 Everything that makes this an *agent that heals itself* is the code in this file:
@@ -13,8 +13,14 @@ import difflib
 import json
 import os
 import re
+import sys
 import time
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 from app.contract import KNOWN_GOOD, contract_violations
 from app.vendor_api import fetch_weather
