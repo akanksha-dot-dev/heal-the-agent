@@ -56,7 +56,6 @@ python run_agent.py --api v2 "What's the weather in Lisbon?"
 | `cassettes/doctor.json` | pre-recorded doctor answers for offline mode |
 | `dashboard.py` | 🖥️ live web dashboard — visual Break It → Heal It pipeline |
 | `check_setup.py` | pre-flight check for participants · `selftest.py` for the presenter |
-| `slides/` | workshop delivery guide with slide content + presenter script |
 
 ## Model cascade (local + cloud in one run)
 `DOCTOR_CASCADE=ollama/gemma4:e4b,gemini-flash-lite-latest` tries the local model first; a failed
