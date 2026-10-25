@@ -51,17 +51,14 @@ def sense(code: str, raw: dict) -> dict:
            {"ok": False, "kind": "...", "detail": "...", ...} when something is wrong.
     """
     outcome = run_sandboxed(code, [raw])
-    if "timeout" in outcome:
-        return {"ok": False, "kind": "timeout", "detail": "the parser ran for more than 5 seconds"}
-    if "load_error" in outcome:
-        return {"ok": False, "kind": "exception", "detail": outcome["load_error"]}
-    first = outcome["results"][0]
-    if not first["ok"]:
-        return {"ok": False, "kind": "exception", "detail": first["traceback"]}
-    problems = contract_violations(first["result"])
-    if problems:  # no crash, but the ANSWER is wrong. Exceptions alone would have missed this.
-        return {"ok": False, "kind": "contract violation", "detail": "; ".join(problems)}
-    return {"ok": True, "result": first["result"]}
+    # TODO (Exercise 1): look at `outcome` and report what happened.
+    #   "timeout" in outcome, "load_error" in outcome, or outcome["results"][0]["ok"] is False
+    #        -> return {"ok": False, "kind": "exception" (or "timeout"), "detail": <the traceback text>}
+    #   it ran, but contract_violations(result) is not empty
+    #        -> return {"ok": False, "kind": "contract violation", "detail": "; ".join(problems)}
+    #   otherwise
+    #        -> return {"ok": True, "result": <the parsed result>}
+    raise NotImplementedError("Exercise 1: finish sense()")
 
 
 # ───────────────────── STEP 2 · DIAGNOSE & PATCH ─────────────────────
@@ -77,8 +74,9 @@ def build_prompt(code: str, raw: dict, incident: dict, failures: list[str]) -> s
 
 def extract_code(reply: str) -> str | None:
     """Models are chatty. Pull the python code block out of the reply (None if there isn't one)."""
-    match = re.search(r"```(?:python|py)?\s*\n(.*?)```", reply, re.DOTALL)
-    return match.group(1).strip() + "\n" if match else None
+    # TODO (Exercise 2): find the text between ```python and ``` in `reply`.
+    # Hint: re.search(r"```...", reply, re.DOTALL). Return None if there is no code block.
+    raise NotImplementedError("Exercise 2: finish extract_code()")
 
 
 def extract_diagnosis(reply: str) -> str:
@@ -88,23 +86,12 @@ def extract_diagnosis(reply: str) -> str:
 # ───────────────────────── STEP 3 · VERIFY ─────────────────────────
 def verify(candidate: str, raw: dict) -> list[str]:
     """Never trust a patch. Return the reasons to REJECT it ([] means accept)."""
-    problems = static_check(candidate)
-    if problems:
-        return problems
-    payloads = [raw] + [old_raw for old_raw, _ in KNOWN_GOOD]
-    out = run_sandboxed(candidate, payloads)
-    if "timeout" in out:
-        return ["the patched code timed out"]
-    if "load_error" in out:
-        return [f"the patched code failed to load: {out['load_error'].strip().splitlines()[-1]}"]
-    new, *old = out["results"]
-    if not new["ok"]:
-        return [f"still crashes on the new payload: {new['traceback'].strip().splitlines()[-1]}"]
-    problems += contract_violations(new["result"])
-    for (old_raw, expected), r in zip(KNOWN_GOOD, old):  # REGRESSION: old payloads must still work
-        if not r["ok"] or r["result"] != expected:
-            problems.append(f"regression: the OLD payload for {old_raw['city']} no longer gives {expected}")
-    return problems
+    # TODO (Exercise 3): never trust a patch. Return a list of reasons to REJECT it ([] = accept).
+    #   1. static_check(candidate)               -> any problems? reject
+    #   2. run_sandboxed(candidate, [raw] + old payloads from KNOWN_GOOD)
+    #   3. the new payload must not crash and must satisfy contract_violations(...)
+    #   4. each old payload must still return exactly its expected answer (REGRESSION)
+    raise NotImplementedError("Exercise 3: finish verify()")
 
 
 # ───────────────────────── STEP 4 · THE LOOP ─────────────────────────
@@ -113,27 +100,27 @@ def heal(code: str, raw: dict, incident: dict) -> str | None:
     failures: list[str] = []
     cascade = list(CASCADE)
     attempt = 0
-    while attempt < MAX_ATTEMPTS and cascade:
-        model = cascade[0]
-        say("🩺", "DIAGNOSE", f"asking {model} (attempt {attempt + 1}/{MAX_ATTEMPTS})", "yellow")
-        try:
-            reply = ask(build_prompt(code, raw, incident, failures), model)
-        except ModelUnavailable as why:
-            say("⏭️ ", "SKIP", f"{model}: {why}", "dim")
-            cascade.pop(0)  # can't reach this brain: try the next one, no attempt used
-            continue
-        attempt += 1
-        say("💬", "MODEL", extract_diagnosis(reply))
-        candidate = extract_code(reply)
-        problems = ["the reply contained no ```python block"] if candidate is None else verify(candidate, raw)
-        if not problems and ANTI_CHEAT:
-            problems = verify_fresh_sample(candidate)
-        if not problems:
-            return candidate
+    # STARTER: ONE attempt, ONE model, NO memory. It works for v2. Run v3 and watch it give up.
+    # TODO (Exercise 4): turn this into a loop that
+    #   - retries up to MAX_ATTEMPTS,
+    #   - remembers what failed (the `failures` list is already fed into the prompt),
+    #   - escalates to the next model in `cascade` after a failed attempt.
+    if not cascade:
+        return None
+    model = cascade[0]
+    say("🩺", "DIAGNOSE", f"asking {model}", "yellow")
+    try:
+        reply = ask(build_prompt(code, raw, incident, failures), model)
+    except ModelUnavailable as why:
+        say("⏭️ ", "SKIP", f"{model}: {why}", "dim")
+        return None
+    say("💬", "MODEL", extract_diagnosis(reply))
+    candidate = extract_code(reply)
+    problems = ["no ```python block"] if candidate is None else verify(candidate, raw)
+    if problems:
         say("🧪", "VERIFY", "✗ rejected: " + " | ".join(problems), "red")
-        failures.append(f"attempt {attempt} ({model}) was rejected: {' | '.join(problems)}")
-        if len(cascade) > 1:  # escalate: a failed attempt hands the baton to the next (stronger) model
-            cascade.pop(0)
+        return None
+    return candidate
     if attempt == 0:
         say("🛑", "NO BRAIN", "none of the models in DOCTOR_CASCADE could be reached", "red")
     return None
