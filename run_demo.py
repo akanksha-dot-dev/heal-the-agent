@@ -16,4 +16,9 @@ if "--api" in sys.argv:  # cross-platform: `python run_demo.py --api v2` (no env
 
 from harness.healer import get_weather_with_healing  # noqa: E402
 
-print(get_weather_with_healing("Lisbon"))
+try:
+    print(get_weather_with_healing("Lisbon"))
+except NotImplementedError as e:
+    print(f"⚠️  {e}")
+    print("   Tip: To run with the complete solution, copy it:")
+    print("        cp solutions/healer.py harness/healer.py")

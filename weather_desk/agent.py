@@ -13,7 +13,11 @@ from google.adk.agents import Agent
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from harness.healer import get_weather_with_healing  # noqa: E402  (after .env so keys are visible)
+# Try student harness; fall back to solutions if student hasn't completed exercises yet
+try:
+    from harness.healer import get_weather_with_healing
+except ImportError:
+    from solutions.healer import get_weather_with_healing  # noqa: E402
 
 
 def get_weather(city: str) -> dict:
@@ -26,7 +30,11 @@ def get_weather(city: str) -> dict:
         A dict with city, temp_c (degrees Celsius) and condition.
         If it contains "status": "error", the tool is broken and could not be repaired.
     """
-    return get_weather_with_healing(city)
+    try:
+        return get_weather_with_healing(city)
+    except NotImplementedError:
+        from solutions.healer import get_weather_with_healing as _solution_heal
+        return _solution_heal(city)
 
 
 root_agent = Agent(
